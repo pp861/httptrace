@@ -20,7 +20,10 @@ func main() {
 	r := gin.Default()
 
 	// 2. use trace middleware
-	r.Use(ginhttp.Middleware(tracer))
+	spanFilterFn := func(r *http.Request) bool {
+		return true
+	}
+	r.Use(ginhttp.Middleware(tracer, ginhttp.MWSpanFilter(spanFilterFn)))
 
 	fn := func(c *gin.Context) {
 		client := &http.Client{}
@@ -32,7 +35,7 @@ func main() {
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"errno":  1,
-				"errmsg": "do http send err",
+				"errmsg": "do http call err",
 				"data":   "",
 			})
 

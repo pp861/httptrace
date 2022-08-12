@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pp861/go-gin v1.0.3
+	github.com/pp861/go-stdlib v1.0.1
 	github.com/pp861/httptrace v1.0.0
 )
 
@@ -35,3 +36,5 @@ require (
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/pp861/httptrace => ../../../httptrace 

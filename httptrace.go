@@ -16,27 +16,35 @@ import (
 // http client do with trace
 // start a new span only if there is a parent span in context.
 func DoHttpSend(ctx context.Context, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
-	if parent := opentracing.SpanFromContext(ctx); parent != nil {
-		parentContext := parent.Context()
-		span := opentracing.StartSpan(
-			"HttpClient Call "+req.URL.RequestURI(),
-			opentracing.ChildOf(parentContext.(opentracing.SpanContext)),
-			opentracing.Tag{Key: string(ext.Component), Value: "HTTP"},
-			ext.SpanKindRPCClient,
-		)
-
-		ext.HTTPMethod.Set(span, req.Method)
-		ext.HTTPUrl.Set(span, req.URL.String())
-
-		defer span.Finish()
-
-		err := opentracing.GlobalTracer().Inject(span.Context(), opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(req.Header))
-		if err != nil {
-			span.LogFields(opentracingLog.String("inject-error", err.Error()))
-		}
+	parent := opentracing.SpanFromContext(ctx)
+	if parent == nil {
+		return client.Do(req)
 	}
 
-	return client.Do(req)
+	parentContext := parent.Context()
+	span := opentracing.StartSpan(
+		"HttpClient Call "+req.URL.RequestURI(),
+		opentracing.ChildOf(parentContext.(opentracing.SpanContext)),
+		opentracing.Tag{Key: string(ext.Component), Value: "HTTP"},
+		ext.SpanKindRPCClient,
+	)
+
+	ext.HTTPMethod.Set(span, req.Method)
+	ext.HTTPUrl.Set(span, req.URL.String())
+
+	defer span.Finish()
+
+	err = opentracing.GlobalTracer().Inject(span.Context(), opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(req.Header))
+	if err != nil {
+		span.LogFields(opentracingLog.String("inject-error", err.Error()))
+	}
+
+	rsp, err = client.Do(req)
+	if err != nil {
+		ext.LogError(span, err)
+	}
+
+	return rsp, err
 }
 
 // init trace
