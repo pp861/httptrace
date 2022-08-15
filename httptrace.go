@@ -13,6 +13,39 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 )
 
+// init trace
+// service: server name
+// exporterAddr: trace agent addr("192.168.1.10:6831")
+func InitTrace(service, exporterAddr string) (opentracing.Tracer, io.Closer, error) {
+	if exporterAddr == "" {
+		return nil, nil, errors.New("trace exporterAddr empty")
+	}
+
+	cfg := &config.Configuration{
+		Sampler: &config.SamplerConfig{
+			Type:  jaeger.SamplerTypeConst,
+			Param: 1,
+		},
+		Reporter: &config.ReporterConfig{
+			LogSpans:           false,
+			LocalAgentHostPort: exporterAddr,
+		},
+	}
+
+	return cfg.New(service, config.Logger(jaeger.StdLogger))
+}
+
+// http client do with trace text map
+// start a new span only if there is a parent span in context.
+func DoHttpSendWithTextMap(textMap map[string]string, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
+	parentContext, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, opentracing.TextMapCarrier(textMap))
+	if parentContext == nil {
+		return client.Do(req)
+	}
+
+	return httpSend(parentContext, client, req)
+}
+
 // http client do with trace
 // start a new span only if there is a parent span in context.
 func DoHttpSend(ctx context.Context, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
@@ -21,7 +54,14 @@ func DoHttpSend(ctx context.Context, client *http.Client, req *http.Request) (rs
 		return client.Do(req)
 	}
 
-	parentContext := parent.Context()
+	return httpSend(parent.Context(), client, req)
+}
+
+func httpSend(parentContext SpanContext, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
+	if parentContext == nil {
+		return nil, errors.New("httptrace: SpanContext is nil")
+	}
+
 	span := opentracing.StartSpan(
 		"HttpClient Call "+req.URL.RequestURI(),
 		opentracing.ChildOf(parentContext.(opentracing.SpanContext)),
@@ -45,26 +85,4 @@ func DoHttpSend(ctx context.Context, client *http.Client, req *http.Request) (rs
 	}
 
 	return rsp, err
-}
-
-// init trace
-// service: server name
-// exporterAddr: trace agent addr("192.168.1.10:6831")
-func InitTrace(service, exporterAddr string) (opentracing.Tracer, io.Closer, error) {
-	if exporterAddr == "" {
-		return nil, nil, errors.New("trace exporterAddr empty")
-	}
-
-	cfg := &config.Configuration{
-		Sampler: &config.SamplerConfig{
-			Type:  jaeger.SamplerTypeConst,
-			Param: 1,
-		},
-		Reporter: &config.ReporterConfig{
-			LogSpans:           false,
-			LocalAgentHostPort: exporterAddr,
-		},
-	}
-
-	return cfg.New(service, config.Logger(jaeger.StdLogger))
 }

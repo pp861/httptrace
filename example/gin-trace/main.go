@@ -31,7 +31,13 @@ func main() {
 		req, _ := http.NewRequest("GET", url, nil)
 
 		// 3. use trace http client
-		rsp, err := httptrace.DoHttpSend(c.Request.Context(), client, req)
+		// rsp, err := httptrace.DoHttpSend(c.Request.Context(), client, req)
+
+		m := make(map[string]string)
+		m["NotOT"] = "blah"
+		m["opname"] = "AlsoNotOT"
+		m["testprefix-fakeid"] = "42"
+		rsp, err := httptrace.DoHttpSendWithTextMap(m, client, req)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"errno":  1,
