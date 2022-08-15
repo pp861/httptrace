@@ -57,7 +57,7 @@ func DoHttpSend(ctx context.Context, client *http.Client, req *http.Request) (rs
 	return httpSend(parent.Context(), client, req)
 }
 
-func httpSend(parentContext SpanContext, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
+func httpSend(parentContext opentracing.SpanContext, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
 	if parentContext == nil {
 		return nil, errors.New("httptrace: SpanContext is nil")
 	}
