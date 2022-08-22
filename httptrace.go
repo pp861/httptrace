@@ -37,14 +37,14 @@ func InitTrace(service, exporterAddr string) (opentracing.Tracer, io.Closer, err
 
 // http client do with trace text map
 // start a new span only if there is a parent span in context.
-func DoHttpSendWithTextMap(textMap map[string]string, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
-	parentContext, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, opentracing.TextMapCarrier(textMap))
-	if parentContext == nil {
-		return client.Do(req)
-	}
+// func DoHttpSendWithTextMap(textMap map[string]string, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
+// 	parentContext, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, opentracing.TextMapCarrier(textMap))
+// 	if parentContext == nil {
+// 		return client.Do(req)
+// 	}
 
-	return httpSend(parentContext, client, req)
-}
+// 	return httpSend(parentContext, client, req)
+// }
 
 // http client do with trace
 // start a new span only if there is a parent span in context.

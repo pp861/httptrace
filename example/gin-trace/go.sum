@@ -69,8 +69,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pp861/go-gin v1.0.3 h1:3Kyiy29YtLi0KCr0a7w2TFMVxq+AbkkqanU0II53g1o=
 github.com/pp861/go-gin v1.0.3/go.mod h1:apgqJL6Ctrx2GQI/b/IYwpnezLoGzp6OyvHy15pHL9s=
-github.com/pp861/httptrace v1.0.1 h1:vNcrx9qsu3WR51nfVByjRTxJjFAJakdP9JzDezP+UzQ=
-github.com/pp861/httptrace v1.0.1/go.mod h1:AHgo3gq9qVDAxn1oSmVkHAj5+87FOvFjoIA7HOYKXYc=
+github.com/pp861/httptrace v1.0.2 h1:K38edoAb2slWo0x53WVXpOKt19bQQfNdtJ8xacZyqWA=
+github.com/pp861/httptrace v1.0.2/go.mod h1:AHgo3gq9qVDAxn1oSmVkHAj5+87FOvFjoIA7HOYKXYc=
 github.com/rogpeppe/go-internal v1.6.1/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 github.com/rogpeppe/go-internal v1.8.0 h1:FCbCCtXNOY3UtUuHUYaghJg4y7Fd14rXifAYUAtL9R8=
 github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=

@@ -16,3 +16,5 @@ require (
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 )
+
+replace github.com/pp861/go-stdlib => ../../../go-stdlib
