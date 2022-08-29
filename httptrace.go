@@ -49,6 +49,14 @@ func InitTrace(service, exporterAddr string) (opentracing.Tracer, io.Closer, err
 // http client do with trace
 // start a new span only if there is a parent span in context.
 func DoHttpSend(ctx context.Context, client *http.Client, req *http.Request) (rsp *http.Response, err error) {
+	if client == nil || req == nil {
+		return nil, errors.New("httptrace: httpClient or httpReq can not be nil")
+	}
+
+	if ctx == nil {
+		return client.Do(req)
+	}
+
 	parent := opentracing.SpanFromContext(ctx)
 	if parent == nil {
 		return client.Do(req)
